@@ -1,9 +1,7 @@
 package com.statuswoe.minecraft;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -38,7 +36,7 @@ public class RSCommandExecutor implements CommandExecutor {
 	private void buildSpire(Player player){
 		Location loc = player.getLocation();
 		World w = loc.getWorld();
-		Spire spire = new Spire(w, loc);
+		plugin.spires.add(new Spire(w, loc, plugin));
 	}
 	
 	
