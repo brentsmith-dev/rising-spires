@@ -1,5 +1,7 @@
 package com.statuswoe.minecraft;
 
+import java.util.Arrays;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -9,16 +11,81 @@ public class Spire {
 	World world;
 	Location location;
 	Plugin plugin;
+	int height = 5;
 	
 	public Spire(World w, Location l, Plugin p){
 		location = l.clone();
-		location.setX(location.getBlockX() + 25);
+		location.setX(location.getBlockX() + 15);
+		location.setY(6);
 		world = w;
 		plugin = p;
+		
+		
+		// Create the large cavern at the bedrock where the spire will start
 		clearSpace();
+		
+		// Create the base and beacon
+		createHeart();
+		
+		// Grow the initial levels of the spire
+		for (int y = 0; y < height; y++){
+			buildCore(location, y);
+		}
+		
+		
+	}
+	
+	public void grow(){
+		checkCavern();
+		createHeart();
+		growCore();
+		growObsidian();
+	}
+	
+	private void checkCavern(){
+		// These are the blocks I don't blow up
+		Material[] unblowupable = {Material.AIR, Material.FIRE, Material.WATER, Material.LAVA, Material.STATIONARY_LAVA, Material.STATIONARY_WATER};
+		for (int x = location.getBlockX() - 10; x <= location.getBlockX() + 10; x++){
+			for (int z = location.getBlockZ() - 10; z <= location.getBlockZ() + 10; z++){
+				// If there is an element found that is not in the unblowupables list we need to blow it up
+				if (!Arrays.asList(unblowupable).contains(world.getBlockAt(x,(location.getBlockY() + height+1),z).getType())){
+					boom();
+				}
+				//TODO: Also maybe remove any standing water or lava
+			}
+		}
+	}
+	
+	private void boom(){
+		Location boomLoc = location.clone();
+		boomLoc.setY(location.getBlockY() + height);
+		world.createExplosion(boomLoc, 20, true);
+		world.createExplosion(boomLoc, 20, true);
+		world.createExplosion(boomLoc, 20, true);
+		world.createExplosion(boomLoc, 20, true);
+		world.createExplosion(boomLoc, 20, true);
+		
+		// use something like this to prevent player damage
+		//@EventHandler
+		//public void onEntityDamage(EntityDamageEvent e){
+		//    if(e.getEntity() instanceof Player && e.getCause().equals(DamageCause.BLOCK_EXPLOSION){
+		//        e.setCancelled(true);
+		//   }
+		//}
+	}
+	
+	private void growCore(){
+		buildCore(location, height+1);
+		height++;
+	}
+	
+	private void growObsidian(){
+		
 	}
 	
 	private void clearSpace(){
+		Location tempLocation = location.clone();
+		
 		// fill in a base for the spire to start on where the bedrock will be erratic
 		//for (int x = location.getBlockX() - 10; x <= location.getBlockX() + 10; x++){
 		//	for (int z = location.getBlockZ() - 10; z <= location.getBlockZ() + 10; z++){
@@ -31,13 +98,18 @@ public class Spire {
 		
 		// First blow shit up and create an area from which to grow
 		// this makes a substantial cavern
-		//world.createExplosion(location, 50, true);
-		//world.createExplosion(location, 50, true);
-		//world.createExplosion(location, 50, true);
-		
-		
-		createHeart();
-		
+		world.createExplosion(location, 50, true);
+		world.createExplosion(location, 50, true);		
+		world.createExplosion(location, 50, true);
+		world.createExplosion(location, 50, true);
+		world.createExplosion(location, 50, true);		
+		world.createExplosion(location, 50, true);	
+		world.createExplosion(location, 50, true);
+		world.createExplosion(location, 50, true);		
+		world.createExplosion(location, 50, true);	
+		world.createExplosion(location, 50, true);
+		world.createExplosion(location, 50, true);		
+		world.createExplosion(location, 50, true);	
 	}
 	
 	private void createHeart(){
@@ -52,13 +124,9 @@ public class Spire {
 //			world.getBlockAt(new Location(world, tempLocation.getBlockX(), 5, z)).setType(Material.BEDROCK);
 //			
 //		}
-		for (int y = 0; y < 4; y++){
-			buildCore(tempLocation, y);
-		}
+		
 	}
 	
-	// TODO: it might be nice to be able to just define an array of block types and
-	// a location and just have a build(array,loc) util function
 	private void buildCore(Location loc, int level){
 		for (int z = loc.getBlockZ() - 3; z <= loc.getBlockZ() +3; z++){
 			setBedrock(loc.getBlockX() - 3, loc.getBlockY() + level, z);
@@ -75,7 +143,7 @@ public class Spire {
 	
 	// we should be able to generate this based on the level
 	private void placeStair(Location loc, int level){
-		// It would be neat if we could turn this into an algorithm with variable size
+		// It would be nice if we could turn this into an algorithm with variable size
 		level = loc.getBlockY() + level;
 		plugin.getServer().broadcastMessage("Level " + level);
 		switch (level % 16){

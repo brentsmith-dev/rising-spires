@@ -3,7 +3,7 @@ main: com.statuswoe.minecraft.RisingSpire
 version: 0.0.1
 
 commands:
-  brent:
+  start:
     description: This is a demo command.
     usage: /<command>
   coord:
