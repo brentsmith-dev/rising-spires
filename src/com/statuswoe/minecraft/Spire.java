@@ -84,7 +84,17 @@ public class Spire {
 	}
 	
 	private void clearSpace(){
-		Location tempLocation = location.clone();
+		// Remove any water or lava or sand or gravel from the column above the spire as these things deaden the explosions
+		Material[] materialToRemove = {Material.SAND, Material.GRAVEL, Material.WATER, Material.LAVA, Material.STATIONARY_LAVA, Material.STATIONARY_WATER};
+		for (int y = 1; y < 200; y++){
+			for (int x = location.getBlockX() - 5; x < location.getBlockX() + 5; x++){
+				for (int z = location.getBlockZ() - 5; z < location.getBlockZ() + 5; z++){
+					if (Arrays.asList(materialToRemove).contains(world.getBlockAt(x,y,z).getType())){
+						world.getBlockAt(x,y,z).setType(Material.AIR);
+					}	
+				}
+			}
+		}
 		
 		// First blow shit up and create an area from which to grow
 		// this makes a substantial cavern
