@@ -86,16 +86,6 @@ public class Spire {
 	private void clearSpace(){
 		Location tempLocation = location.clone();
 		
-		// fill in a base for the spire to start on where the bedrock will be erratic
-		//for (int x = location.getBlockX() - 10; x <= location.getBlockX() + 10; x++){
-		//	for (int z = location.getBlockZ() - 10; z <= location.getBlockZ() + 10; z++){
-		//		world.getBlockAt(new Location(world, x, location.getBlockY() -1, z)).setType(Material.BEDROCK);
-		//	}
-		//}
-		
-		// The location of the center of the spire, starting at bedrock
-		//location.setY(5); // 5 can't have bedrock which might muffle the explosion
-		
 		// First blow shit up and create an area from which to grow
 		// this makes a substantial cavern
 		world.createExplosion(location, 50, true);
@@ -115,16 +105,11 @@ public class Spire {
 	private void createHeart(){
 		// we're going to use a beacon for the heart
 		Location tempLocation = location.clone();
+		// create the bedrock (stone for now so I can debug) floor the whole things is going to be sitting on
+		createPad(tempLocation.getBlockX()-3, tempLocation.getBlockY(), tempLocation.getBlockZ()-3, 7, Material.STONE);
+		// create the iron pad that the beacon needs to sit on in order to create the beam of light
 		createPad(tempLocation.getBlockX()-1, tempLocation.getBlockY(), tempLocation.getBlockZ()-1, 3, Material.IRON_BLOCK);
 		world.getBlockAt(tempLocation.getBlockX(), tempLocation.getBlockY() + 1, tempLocation.getBlockZ()).setType(Material.BEACON);
-		
-		// start building spire core
-//		tempLocation.setX(tempLocation.getBlockX()+3);
-//		for (int z = tempLocation.getBlockZ()-3; z <=  tempLocation.getBlockZ()+3; z++){
-//			world.getBlockAt(new Location(world, tempLocation.getBlockX(), 5, z)).setType(Material.BEDROCK);
-//			
-//		}
-		
 	}
 	
 	private void buildCore(Location loc, int level){
