@@ -41,7 +41,7 @@ public class RSCommandExecutor implements CommandExecutor {
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable(){
 			public void run(){
 				if (spire.height < 225){
-					plugin.getServer().broadcastMessage("Is that a Spire in your pocket or are you just happy to see me!");
+					//plugin.getServer().broadcastMessage("Spire Growing!");
 					spire.grow();
 				}
 			}

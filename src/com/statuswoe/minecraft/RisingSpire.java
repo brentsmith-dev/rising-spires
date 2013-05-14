@@ -2,6 +2,10 @@ package com.statuswoe.minecraft;
 
 import java.util.Vector;
 
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class RisingSpire extends JavaPlugin {
@@ -15,6 +19,7 @@ public final class RisingSpire extends JavaPlugin {
 		// This will throw a NullPointerException if you don't have the command defined in your plugin.yml file!
 		getCommand("start").setExecutor(new RSCommandExecutor(this));
 		getCommand("coord").setExecutor(new RSCommandExecutor(this));
+		getServer().getPluginManager().registerEvents(new DamageListener(), this);
     }
  
     @Override
@@ -22,5 +27,7 @@ public final class RisingSpire extends JavaPlugin {
         //Logic to be performed when the plugin is disabled
     	getLogger().info("onDisable has been invoked!");
     }
+    
+   
  
 }

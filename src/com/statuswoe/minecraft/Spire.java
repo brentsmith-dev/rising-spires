@@ -15,7 +15,6 @@ public class Spire {
 	
 	public Spire(World w, Location l, Plugin p){
 		location = l.clone();
-		location.setX(location.getBlockX() + 15);
 		location.setY(6);
 		world = w;
 		plugin = p;
@@ -37,34 +36,30 @@ public class Spire {
 	
 	public void grow(){
 		checkCavern();
-		createHeart();
 		growCore();
 		growObsidian();
 	}
 	
 	private void checkCavern(){
 		// These are the blocks I don't blow up
-		Material[] unblowupable = {Material.AIR, Material.FIRE, Material.WATER, Material.LAVA, Material.STATIONARY_LAVA, Material.STATIONARY_WATER};
-		for (int x = location.getBlockX() - 10; x <= location.getBlockX() + 10; x++){
-			for (int z = location.getBlockZ() - 10; z <= location.getBlockZ() + 10; z++){
+		for (int x = location.getBlockX() - 6; x <= location.getBlockX() + 6; x++){
+			for (int z = location.getBlockZ() - 6; z <= location.getBlockZ() + 6; z++){
 				// If there is an element found that is not in the unblowupables list we need to blow it up
-				if (!Arrays.asList(unblowupable).contains(world.getBlockAt(x,(location.getBlockY() + height+1),z).getType())){
-					boom();
+				//if (!Arrays.asList(unblowupable).contains(world.getBlockAt(x,(location.getBlockY() + height+1),z).getType())){
+				if (world.getBlockAt(x,(location.getBlockY() + height+1),z).getType() != Material.AIR){
+					boom(x,location.getBlockY() + height+1,z);
 				}
+				//}
 				//TODO: Also maybe remove any standing water or lava
 			}
 		}
 	}
 	
-	private void boom(){
+	private void boom(int x, int y, int z){
 		Location boomLoc = location.clone();
 		boomLoc.setY(location.getBlockY() + height);
-		world.createExplosion(boomLoc, 20, true);
-		world.createExplosion(boomLoc, 20, true);
-		world.createExplosion(boomLoc, 20, true);
-		world.createExplosion(boomLoc, 20, true);
-		world.createExplosion(boomLoc, 20, true);
-		
+		//world.createExplosion(boomLoc, 20, true);
+		world.createExplosion(x,y,z,25,true);
 		// use something like this to prevent player damage
 		//@EventHandler
 		//public void onEntityDamage(EntityDamageEvent e){
@@ -75,7 +70,7 @@ public class Spire {
 	}
 	
 	private void growCore(){
-		buildCore(location, height+1);
+		buildCore(location, height);
 		height++;
 	}
 	
@@ -87,8 +82,8 @@ public class Spire {
 		// Remove any water or lava or sand or gravel from the column above the spire as these things deaden the explosions
 		Material[] materialToRemove = {Material.SAND, Material.GRAVEL, Material.WATER, Material.LAVA, Material.STATIONARY_LAVA, Material.STATIONARY_WATER};
 		for (int y = 1; y < 200; y++){
-			for (int x = location.getBlockX() - 5; x < location.getBlockX() + 5; x++){
-				for (int z = location.getBlockZ() - 5; z < location.getBlockZ() + 5; z++){
+			for (int x = location.getBlockX() - 9; x < location.getBlockX() + 9; x++){
+				for (int z = location.getBlockZ() - 9; z < location.getBlockZ() + 9; z++){
 					if (Arrays.asList(materialToRemove).contains(world.getBlockAt(x,y,z).getType())){
 						world.getBlockAt(x,y,z).setType(Material.AIR);
 					}	
@@ -115,6 +110,10 @@ public class Spire {
 	private void createHeart(){
 		// we're going to use a beacon for the heart
 		Location tempLocation = location.clone();
+		// for the limited placement area we want to make sure the bedrock floor doen't have large pockets
+		for (int i = 0; i < 6; i++){
+			createPad(tempLocation.getBlockX()-10, i, tempLocation.getBlockZ()-10, 21, Material.BEDROCK);
+		}
 		// create the bedrock (stone for now so I can debug) floor the whole things is going to be sitting on
 		createPad(tempLocation.getBlockX()-3, tempLocation.getBlockY(), tempLocation.getBlockZ()-3, 7, Material.STONE);
 		// create the iron pad that the beacon needs to sit on in order to create the beam of light
@@ -140,7 +139,7 @@ public class Spire {
 	private void placeStair(Location loc, int level){
 		// It would be nice if we could turn this into an algorithm with variable size
 		level = loc.getBlockY() + level;
-		plugin.getServer().broadcastMessage("Level " + level);
+		//plugin.getServer().broadcastMessage("Level " + level);
 		switch (level % 16){
 			case 0 :  setBedrock(loc.getBlockX() - 2, level, loc.getBlockZ() - 2);break;
 			case 1 :  setBedrock(loc.getBlockX() - 1, level, loc.getBlockZ() - 2);break;
