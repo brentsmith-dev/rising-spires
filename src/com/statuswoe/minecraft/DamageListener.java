@@ -3,7 +3,6 @@
  */
 package com.statuswoe.minecraft;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -17,9 +16,10 @@ public class DamageListener implements Listener {
 
 	@EventHandler
     public void onEntityDamage(EntityDamageEvent e){
-        if(e.getEntity() instanceof Player && e.getCause().equals(DamageCause.BLOCK_EXPLOSION)){
+        if(e.getCause().equals(DamageCause.BLOCK_EXPLOSION)){
             e.setCancelled(true);
         }
     }
+	
 
 }

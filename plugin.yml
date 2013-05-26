@@ -9,3 +9,6 @@ commands:
   coord:
     description: This is a demo command.
     usage: /<command>
+  daywalker:
+    description: This is a demo command.
+    usage: /<command>

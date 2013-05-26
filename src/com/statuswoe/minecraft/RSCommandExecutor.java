@@ -7,6 +7,7 @@ import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+
 public class RSCommandExecutor implements CommandExecutor {
 
 	private RisingSpire plugin;
@@ -19,13 +20,23 @@ public class RSCommandExecutor implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		Player player = (Player) sender;
 		if (command.getName().equalsIgnoreCase("start")){
-			plugin.getServer().broadcastMessage("IT HAS BEGUN!");
+			plugin.getServer().broadcastMessage("IT HAS BEGUN!!!!");
+			if (null == plugin.spawner){
+				plugin.spawner = new MobSpawner(plugin, player.getWorld());
+			}
 			createSpire(player);
 			return true;
 		}else if (command.getName().equalsIgnoreCase("coord")){
 			sender.sendMessage("x: " + player.getLocation().getBlockX() +
 					" y :" + player.getLocation().getBlockY() +
 					" z: " + player.getLocation().getBlockZ());
+			return true;
+		}else if (command.getName().equalsIgnoreCase("daywalker")){
+			if (null == plugin.spawner){
+				plugin.spawner = new MobSpawner(plugin, player.getWorld());
+			}
+			sender.getServer().getLogger().info("daywalker command!");
+			plugin.spawner.spawn(player.getLocation());
 			return true;
 		}else{
 			return false;
@@ -40,7 +51,7 @@ public class RSCommandExecutor implements CommandExecutor {
 		// Start the timer
 		plugin.getServer().getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable(){
 			public void run(){
-				if (spire.height < 225){
+				if (spire.height < 100){
 					//plugin.getServer().broadcastMessage("Spire Growing!");
 					spire.grow();
 				}
